@@ -1,11 +1,5 @@
 use crate::ode::*;
-// use nalgebra::Vector2;
-// use nalgebra::*;
 use nalgebra::{SVector};
-
-/// Integrand type definition.
-type Integrand<Y, T> = fn(Y, T) -> Y;
-
 
 /// Fixed step parameters
 pub struct FixedStepODE<Y, T> {

@@ -1,12 +1,4 @@
 use std::fs::File;
-// use std::io::prelude::*;
-
-// fn main() -> std::io::Result<()> {
-//     let mut file = File::create("foo.txt")?;
-//     file.write_all(b"Hello, world!")?;
-//     Ok(())
-// }
-
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -19,10 +11,25 @@ struct Harmonic {
     dj: f64,
 }
 
+struct EGM {
+    path: String,
+}
+
+impl EGM {
+    pub fn from_file(path: String) -> Self {
+        Self {
+            path,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
     use csv::ReaderBuilder;
+    use nalgebra::{DMatrix, Vector6, RowVector6, Vector2};
+    use ndarray::{Array3, Array1};
+    use std::error::Error;
     // use std::fs::read;
     // use regex::Regex;
 
@@ -31,7 +38,7 @@ mod test {
 
 
     #[test]
-    fn test_1() -> std::io::Result<()> {
+    fn test_1() -> std::io::Result<()>{
         let file = File::open(TEST_EGM96)?;
         let reader = std::io::BufReader::new(file);
         // let mut reader = csv::Reader::from_reader(std::io::stdin());
@@ -39,11 +46,31 @@ mod test {
         let mut rdr = ReaderBuilder::new()
             .from_reader(reader);
 
-        for result in rdr.deserialize() {
-            let record : Harmonic = result?;
-            println!("{:?}", record);
+        use ndarray::array;
+        use ndarray::s;
+
+        use std::collections::HashMap;
+        let mut harmonics_c_val: HashMap<(usize, usize), (f64, f64)> = HashMap::new();
+        let mut harmonics_c_err: HashMap<(usize, usize), (f64, f64)> = HashMap::new();
+
+        for (i, result) in rdr.deserialize().enumerate() {
+            let record: Harmonic = result?;
+            harmonics_c_val.insert((record.i, record.j), (record.ci, record.cj));
+            harmonics_c_err.insert((record.i, record.j), (record.di, record.dj));
+
+            // test.set_row(i, &RowVector6::new(
+            //     record.i,
+            //     record.j,
+            //     record.ci,
+            //     record.cj,
+            //     record.di,
+            //     record.dj,
+            // ));
+            // println!("{:?}", record);
             // println!("{:?}", result);
         }
+        println!("{:?}", harmonics_c_val.get(&(30,30)));
+        println!("{:?}", harmonics_c_err.get(&(30,30)));
 
         // if let Some(result) = rdr.records().next() {
         //     let record = result?;

@@ -1,6 +1,15 @@
 use nalgebra::SVector;
 use nalgebra::DMatrix;
 
+
+/// Integrand type definition.
+type Integrand<Y, T> = fn(Y, T) -> Y;
+
+
+struct ButcherTableau {
+
+}
+
 /// ```
 /// let solution = sol::Solution()  // more saving => less performance
 ///     .save_error(true)

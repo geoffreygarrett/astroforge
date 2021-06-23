@@ -7,8 +7,13 @@ edition = "2018"
 
 [dependencies]
 nalgebra = { version = "0.26.2", optional = true }
+serde = { version = "1.0.126", features = ["derive"], optional = true }
+csv = { version = "1.1.6", optional = true }
+ndarray = { version = "0.15.3", optional = true }
 
 [features]
-default = ["celestial", "nalgebra"]
+default = ["celestial", "nalgebra", "egm", "interp", "doe"]
+interp = ["ndarray"]
+egm = ["csv", "serde", "ndarray"]
 ode = []
 celestial = []
